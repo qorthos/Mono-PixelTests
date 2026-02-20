@@ -21,11 +21,27 @@ namespace BloomOpenGL
         Effect gaussianBlur;
         Effect bloomCombine;
 
+        Vector2 cameraPosition = Vector2.Zero;
+        const float CameraSpeed = 60f; // pixels per second
+
+        KeyboardState previousKeyboardState;
+
+        const string bloomThresholdParam = "BloomThreshold";
+        const string bloomSoftKneeParam = "BloomSoftKnee";
+        const string texlSizeParam = "TexelSize";
+        const string blurAmountParam = "BlurAmount";
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+        }
+
+        protected override void Initialize()
+        {
+            previousKeyboardState = Keyboard.GetState();
+            base.Initialize();
         }
 
         protected override void LoadContent()
@@ -59,6 +75,32 @@ namespace BloomOpenGL
                 pp.BackBufferHeight / 2);
         }
 
+        protected override void Update(GameTime gameTime)
+        {
+            UpdateCamera(gameTime);
+            base.Update(gameTime);
+        }
+
+        private void UpdateCamera(GameTime gameTime)
+        {
+            KeyboardState state = Keyboard.GetState();
+            float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Vector2 move = Vector2.Zero;
+
+            if (state.IsKeyDown(Keys.W)) move.Y -= 1;
+            if (state.IsKeyDown(Keys.S)) move.Y += 1;
+            if (state.IsKeyDown(Keys.A)) move.X -= 1;
+            if (state.IsKeyDown(Keys.D)) move.X += 1;
+
+            if (move != Vector2.Zero)
+            {
+                move.Normalize();
+                cameraPosition += move * CameraSpeed * delta;
+            }
+
+            previousKeyboardState = state;
+        }
+
         protected override void Draw(GameTime gameTime)
         {
             // 1. Render Scene (main diffuse/albedo)
@@ -66,7 +108,7 @@ namespace BloomOpenGL
             GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin();
-            spriteBatch.Draw(sprite, new Vector2(300, 200), Color.White);
+            spriteBatch.Draw(sprite, new Vector2(300, 200) - cameraPosition, Color.White);
             spriteBatch.End();
 
             // 2. Render Emission Data
@@ -75,7 +117,7 @@ namespace BloomOpenGL
 
             spriteBatch.Begin();
             // Render emission texture - this contains the data that should bloom
-            spriteBatch.Draw(emissionTexture, new Vector2(300, 200), Color.White);
+            spriteBatch.Draw(emissionTexture, new Vector2(300, 200) - cameraPosition, Color.White);
             // You can add more emission sources here if needed
             spriteBatch.End();
 
@@ -85,8 +127,8 @@ namespace BloomOpenGL
 
             spriteBatch.Begin(effect: bloomExtract);
 
-            bloomExtract.Parameters["BloomThreshold"].SetValue(0.8f); 
-            bloomExtract.Parameters["BloomSoftKnee"].SetValue(0.8f);
+            bloomExtract.Parameters[bloomThresholdParam].SetValue(0.8f); 
+            bloomExtract.Parameters[bloomSoftKneeParam].SetValue(0.8f);
 
             // Calculate the scale factor to downsample properly
             float scaleX = (float)halfTarget1.Width / emissionTarget.Width;
@@ -104,9 +146,9 @@ namespace BloomOpenGL
             spriteBatch.End();
 
             // 4. Horizontal Blur
-            gaussianBlur.Parameters["TexelSize"]
+            gaussianBlur.Parameters[texlSizeParam]
                 .SetValue(new Vector2(1f / halfTarget1.Width, 0));
-            gaussianBlur.Parameters["BlurAmount"].SetValue(1f);
+            gaussianBlur.Parameters[blurAmountParam].SetValue(1f);
 
             GraphicsDevice.SetRenderTarget(halfTarget2);
             GraphicsDevice.Clear(Color.Black);
@@ -116,7 +158,7 @@ namespace BloomOpenGL
             spriteBatch.End();
 
             // 5. Vertical Blur
-            gaussianBlur.Parameters["TexelSize"]
+            gaussianBlur.Parameters[texlSizeParam]
                 .SetValue(new Vector2(0, 1f / halfTarget1.Height));
 
             GraphicsDevice.SetRenderTarget(halfTarget1);
