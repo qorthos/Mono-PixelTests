@@ -21,15 +21,21 @@ namespace BloomOpenGL
         Effect gaussianBlur;
         Effect bloomCombine;
 
+        // Cache effect parameters
+        EffectParameter bloomThresholdParameter;
+        EffectParameter bloomSoftKneeParameter;
+        EffectParameter texelSizeParameter;
+        EffectParameter blurAmountParameter;
+        EffectParameter bloomTextureParameter;
+        EffectParameter bloomIntensityParameter;
+        EffectParameter bloomSaturationParameter;
+        EffectParameter baseIntensityParameter;
+        EffectParameter baseSaturationParameter;
+
         Vector2 cameraPosition = Vector2.Zero;
         const float CameraSpeed = 60f; // pixels per second
 
         KeyboardState previousKeyboardState;
-
-        const string bloomThresholdParam = "BloomThreshold";
-        const string bloomSoftKneeParam = "BloomSoftKnee";
-        const string texlSizeParam = "TexelSize";
-        const string blurAmountParam = "BlurAmount";
 
         public Game1()
         {
@@ -49,11 +55,22 @@ namespace BloomOpenGL
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             sprite = Content.Load<Texture2D>("Sprite-0001");
-            emissionTexture = Content.Load<Texture2D>("Sprite-White"); // Load your emission texture
+            emissionTexture = Content.Load<Texture2D>("Sprite-White");
 
             bloomExtract = Content.Load<Effect>("BloomExtract");
             gaussianBlur = Content.Load<Effect>("GaussianBlur");
             bloomCombine = Content.Load<Effect>("BloomCombine");
+
+            // Cache effect parameters (once)
+            bloomThresholdParameter = bloomExtract.Parameters["BloomThreshold"];
+            bloomSoftKneeParameter = bloomExtract.Parameters["BloomSoftKnee"];
+            texelSizeParameter = gaussianBlur.Parameters["TexelSize"];
+            blurAmountParameter = gaussianBlur.Parameters["BlurAmount"];
+            bloomTextureParameter = bloomCombine.Parameters["BloomTexture"];
+            bloomIntensityParameter = bloomCombine.Parameters["BloomIntensity"];
+            bloomSaturationParameter = bloomCombine.Parameters["BloomSaturation"];
+            baseIntensityParameter = bloomCombine.Parameters["BaseIntensity"];
+            baseSaturationParameter = bloomCombine.Parameters["BaseSaturation"];
 
             var pp = GraphicsDevice.PresentationParameters;
 
@@ -121,19 +138,15 @@ namespace BloomOpenGL
             // You can add more emission sources here if needed
             spriteBatch.End();
 
-            // 3. Extract Emission Areas for Bloom (downsample from emission target)
-            GraphicsDevice.SetRenderTarget(halfTarget1);
-            GraphicsDevice.Clear(Color.Black);
-
-            spriteBatch.Begin(effect: bloomExtract);
-
-            bloomExtract.Parameters[bloomThresholdParam].SetValue(0.8f); 
-            bloomExtract.Parameters[bloomSoftKneeParam].SetValue(0.8f);
+            // 3. Extract Emission Areas for Bloom
+            bloomThresholdParameter.SetValue(0.8f); 
+            bloomSoftKneeParameter.SetValue(0.8f);
 
             // Calculate the scale factor to downsample properly
             float scaleX = (float)halfTarget1.Width / emissionTarget.Width;
             float scaleY = (float)halfTarget1.Height / emissionTarget.Height;
             
+            spriteBatch.Begin(effect: bloomExtract);
             spriteBatch.Draw(emissionTarget, 
                 Vector2.Zero, 
                 null, 
@@ -146,9 +159,8 @@ namespace BloomOpenGL
             spriteBatch.End();
 
             // 4. Horizontal Blur
-            gaussianBlur.Parameters[texlSizeParam]
-                .SetValue(new Vector2(1f / halfTarget1.Width, 0));
-            gaussianBlur.Parameters[blurAmountParam].SetValue(1f);
+            texelSizeParameter.SetValue(new Vector2(1f / halfTarget1.Width, 0));
+            blurAmountParameter.SetValue(1f);
 
             GraphicsDevice.SetRenderTarget(halfTarget2);
             GraphicsDevice.Clear(Color.Black);
@@ -158,8 +170,7 @@ namespace BloomOpenGL
             spriteBatch.End();
 
             // 5. Vertical Blur
-            gaussianBlur.Parameters[texlSizeParam]
-                .SetValue(new Vector2(0, 1f / halfTarget1.Height));
+            texelSizeParameter.SetValue(new Vector2(0, 1f / halfTarget1.Height));
 
             GraphicsDevice.SetRenderTarget(halfTarget1);
             GraphicsDevice.Clear(Color.Black);
@@ -169,19 +180,17 @@ namespace BloomOpenGL
             spriteBatch.End();
 
             // 6. Final Combine (scene + bloom from emission)
+            bloomTextureParameter.SetValue(halfTarget1);
+            bloomIntensityParameter.SetValue(1.2f);
+            baseIntensityParameter.SetValue(0.5f);
+            bloomSaturationParameter.SetValue(1.0f);
+            baseSaturationParameter.SetValue(0.5f);
+
             GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.Clear(Color.Black);
 
             // Set the bloom texture to sampler 1
             spriteBatch.Begin(effect: bloomCombine);
-
-            bloomCombine.Parameters["BloomTexture"].SetValue(halfTarget1);
-
-            bloomCombine.Parameters["BloomIntensity"].SetValue(1.2f);
-            bloomCombine.Parameters["BaseIntensity"].SetValue(0.5f);
-            bloomCombine.Parameters["BloomSaturation"].SetValue(1.0f);
-            bloomCombine.Parameters["BaseSaturation"].SetValue(0.5f);
-
             spriteBatch.Draw(sceneTarget, Vector2.Zero, Color.White);
             spriteBatch.End();
 
