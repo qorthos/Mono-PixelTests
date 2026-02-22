@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\selft\\Documents\\Github\\Mono-PixelTests\\EmptyGame\\",
+  "WorkspaceRootPath": "C:\\Users\\selft\\Documents\\GitHub\\Mono-PixelTests\\EmptyGame\\",
   "Documents": [
     {
       "AbsoluteMoniker": "D:0:0:{5C287D46-1DC8-44BE-8ED7-B5F75D0684B4}|EmptyGame.csproj|c:\\users\\selft\\documents\\github\\mono-pixeltests\\emptygame\\game1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -14,24 +14,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 212,
-          "SelectedChildIndex": 10,
+          "SelectedChildIndex": 5,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{57d563b6-44a5-47df-85be-f4199ad6b651}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:3:0:{57d563b6-44a5-47df-85be-f4199ad6b651}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:6:0:{57d563b6-44a5-47df-85be-f4199ad6b651}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:8:0:{57d563b6-44a5-47df-85be-f4199ad6b651}"
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
@@ -46,27 +30,23 @@
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:7:0:{dcc4ea97-1c0c-482b-b205-e541c0df9728}"
+              "Name": "ST:12:0:{dcc4ea97-1c0c-482b-b205-e541c0df9728}"
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:4:0:{dcc4ea97-1c0c-482b-b205-e541c0df9728}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:5:0:{dcc4ea97-1c0c-482b-b205-e541c0df9728}"
+              "Name": "ST:13:0:{dcc4ea97-1c0c-482b-b205-e541c0df9728}"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Game1.cs",
-              "DocumentMoniker": "C:\\Users\\selft\\Documents\\Github\\Mono-PixelTests\\EmptyGame\\Game1.cs",
+              "DocumentMoniker": "C:\\Users\\selft\\Documents\\GitHub\\Mono-PixelTests\\EmptyGame\\Game1.cs",
               "RelativeDocumentMoniker": "Game1.cs",
-              "ToolTip": "C:\\Users\\selft\\Documents\\Github\\Mono-PixelTests\\EmptyGame\\Game1.cs",
+              "ToolTip": "C:\\Users\\selft\\Documents\\GitHub\\Mono-PixelTests\\EmptyGame\\Game1.cs",
               "RelativeToolTip": "Game1.cs",
-              "ViewState": "AgIAABQAAAAAAAAAAAAUwC8AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-20T23:18:56.041Z",
+              "WhenOpened": "2026-02-22T00:30:52.491Z",
               "EditorCaption": ""
             }
           ]
