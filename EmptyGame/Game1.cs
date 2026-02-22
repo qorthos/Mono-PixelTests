@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace EmptyGame
 {
@@ -17,6 +18,8 @@ namespace EmptyGame
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            IsFixedTimeStep = true;
+            TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60.0);
         }
 
         protected override void Initialize()
