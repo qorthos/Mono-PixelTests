@@ -53,7 +53,7 @@ namespace EmptyGame
             _graphics.PreferredBackBufferHeight = 800;
             _graphics.ApplyChanges();
 
-            //IsFixedTimeStep = true;
+            IsFixedTimeStep = false;
             //TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60.0);
 
         }
